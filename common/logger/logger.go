@@ -30,7 +30,7 @@ var getFormatter = func(skip int) *logrus.JSONFormatter {
 	}
 }
 
-// Info This should be called for tracking the events happened in the application.
+// Info LogInfo Info This should be called for tracking the events happened in the application.
 func Info(ctx *fiber.Ctx, args ...interface{}) {
 	logger.Info(ctx, args)
 }

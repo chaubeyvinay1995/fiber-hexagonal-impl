@@ -2,15 +2,17 @@ package repositories
 
 import (
 	"context"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"hexagonal-fiber-impl/core/domain"
 	"hexagonal-fiber-impl/core/ports"
 	"time"
 )
 
 const (
-	MongoClientTimeout = 5
+	MongoClientTimeout = 20
 )
 
 type UserRepository struct {
@@ -37,17 +39,27 @@ func NewUserRepository(conn string) *UserRepository {
 	}
 	return &UserRepository{
 		client:     client,
-		database:   client.Database("goHexagonalBlog"),
-		collection: client.Database("goHexagonalBlog").Collection("users"),
+		database:   client.Database("hexagonal"),
+		collection: client.Database("hexagonal").Collection("hexagonal"),
 	}
 }
 
 func (r *UserRepository) Login(email string, password string) error {
-	//Here your code for login in mongo database
+	var user domain.User
+	filter := bson.D{{"email", email}, {"password", password}}
+	err := r.collection.FindOne(context.TODO(), filter).Decode(&user)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 func (r *UserRepository) Register(email string, password string) error {
 	//Here your code for save in mongo database
+	newUser := domain.User{Email: email, Password: password}
+	_, err := r.collection.InsertOne(context.TODO(), &newUser)
+	if err != nil {
+		return err
+	}
 	return nil
 }

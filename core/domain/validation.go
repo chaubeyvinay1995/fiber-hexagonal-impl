@@ -6,8 +6,8 @@ import (
 )
 
 type UserLoginRequest struct {
-	Name  string `validate:"required,min=3,max=32"`
-	Email string `validate:"required,email,min=6,max=32"`
+	Email    string `validate:"required,min=3,max=32"`
+	Password string `validate:"required,min=8,max=16"`
 }
 
 //var validate = validator.New()

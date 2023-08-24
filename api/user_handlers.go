@@ -22,20 +22,18 @@ func NewUserHandlers(userService ports.IUserService) *UserHandlers {
 func (h *UserHandlers) Login(c *fiber.Ctx) error {
 	var payload *domain.UserLoginRequest
 	if err := c.BodyParser(&payload); err != nil {
-		return ErrorResponse(c, 400, err.Error())
+		return ErrorResponse(c, 400, err.Error(), "Error while parsing request data.")
 	}
 	errors := payload.Validate()
 	if errors != nil {
-		return ErrorResponse(c, 400, errors)
+		return ErrorResponse(c, 400, errors, "Validation error")
 	}
-	var email string
-	var password string
 	//Extract the body and get the email and password
-	err := h.userService.Login(email, password)
+	err := h.userService.Login(payload.Email, payload.Password)
 	if err != nil {
-		return err
+		return ErrorResponse(c, 400, err, "User not found")
 	}
-	return nil
+	return SuccessResponse(c, 200, err, "Logged in successfully..")
 }
 
 func (h *UserHandlers) Register(c *fiber.Ctx) error {
@@ -46,7 +44,7 @@ func (h *UserHandlers) Register(c *fiber.Ctx) error {
 	//Extract the body and get the email and password
 	err := h.userService.Register(email, password, confirmPassword)
 	if err != nil {
-		return ErrorResponse(c, 400, err)
+		return ErrorResponse(c, 400, err, "err")
 	}
 	return nil
 }

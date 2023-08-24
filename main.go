@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	mongoConn := "secret🤫"
+	mongoConn := "mongodb+srv://vinpythondev:YXFMI4DSmGAoD6Ep@cluster1.t6w2vqw.mongodb.net/?retryWrites=true&w=majority"
 	//repositories
 	userRepository := repositories.NewUserRepository(mongoConn)
 	//services
