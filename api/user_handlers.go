@@ -31,9 +31,9 @@ func (h *UserHandlers) Login(c *fiber.Ctx) error {
 	//Extract the body and get the email and password
 	err := h.userService.Login(payload.Email, payload.Password)
 	if err != nil {
-		return ErrorResponse(c, 400, err, "User not found")
+		return ErrorResponse(c, 400, err.Error(), "User not found")
 	}
-	return SuccessResponse(c, 200, err, "Logged in successfully..")
+	return SuccessResponse(c, 200, err.Error(), "Logged in successfully..")
 }
 
 func (h *UserHandlers) Register(c *fiber.Ctx) error {
