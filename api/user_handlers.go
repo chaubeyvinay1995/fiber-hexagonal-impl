@@ -28,23 +28,27 @@ func (h *UserHandlers) Login(c *fiber.Ctx) error {
 	if errors != nil {
 		return ErrorResponse(c, 400, errors, "Validation error")
 	}
-	//Extract the body and get the email and password
-	err := h.userService.Login(payload.Email, payload.Password)
+	user, err := h.userService.Login(payload.Email, payload.Password)
+
 	if err != nil {
 		return ErrorResponse(c, 400, err.Error(), "User not found")
 	}
-	return SuccessResponse(c, 200, err.Error(), "Logged in successfully..")
+
+	return SuccessResponse(c, 200, user, "Logged in successfully")
 }
 
 func (h *UserHandlers) Register(c *fiber.Ctx) error {
-	var email string
-	var password string
-	var confirmPassword string
-
-	//Extract the body and get the email and password
-	err := h.userService.Register(email, password, confirmPassword)
-	if err != nil {
-		return ErrorResponse(c, 400, err, "err")
+	var payload *domain.UserRegisterRequest
+	if err := c.BodyParser(&payload); err != nil {
+		return ErrorResponse(c, 400, err.Error(), "Error while parsing request data.")
 	}
-	return nil
+	errors := payload.Validate()
+	if errors != nil {
+		return ErrorResponse(c, 400, errors, "Validation error")
+	}
+	user, err := h.userService.Register(payload.Email, payload.Password, payload.ConfirmPassword)
+	if err != nil {
+		return ErrorResponse(c, 400, err.Error(), "Operation failed")
+	}
+	return SuccessResponse(c, 200, user, "User register in successfully")
 }

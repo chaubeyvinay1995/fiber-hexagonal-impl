@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -44,22 +45,22 @@ func NewUserRepository(conn string) *UserRepository {
 	}
 }
 
-func (r *UserRepository) Login(email string, password string) error {
+func (r *UserRepository) Login(email string, password string) (domain.User, error) {
 	var user domain.User
 	filter := bson.D{{"email", email}, {"password", password}}
 	err := r.collection.FindOne(context.TODO(), filter).Decode(&user)
 	if err != nil {
-		return err
+		return domain.User{}, err
 	}
-	return nil
+	return user, nil
 }
 
-func (r *UserRepository) Register(email string, password string) error {
+func (r *UserRepository) Register(email string, password string) (domain.User, error) {
 	//Here your code for save in mongo database
-	newUser := domain.User{Email: email, Password: password}
+	newUser := domain.User{Email: email, Password: password, Id: primitive.NewObjectID()}
 	_, err := r.collection.InsertOne(context.TODO(), &newUser)
 	if err != nil {
-		return err
+		return domain.User{}, err
 	}
-	return nil
+	return newUser, err
 }
