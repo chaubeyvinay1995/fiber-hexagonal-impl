@@ -3,7 +3,7 @@ package api
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/gofiber/fiber/v2"
+	fiber "github.com/gofiber/fiber/v2"
 	"hexagonal-fiber-impl/common/constant"
 	"hexagonal-fiber-impl/common/logger"
 	"hexagonal-fiber-impl/common/zerologImpl"
