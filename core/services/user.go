@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"hexagonal-fiber-impl/core/domain"
 	"hexagonal-fiber-impl/core/ports"
 )
@@ -24,6 +25,10 @@ func (s *UserService) Login(email string, password string) (domain.User, error) 
 	if err != nil {
 		return domain.User{}, err
 	}
+	fmt.Println("User Password is ", user.Password)
+	if !CompareHashPassword(user.Password, password) {
+		return domain.User{}, errors.New("invalid Password")
+	}
 	return user, err
 }
 
@@ -31,7 +36,11 @@ func (s *UserService) Register(email string, password string, confirmPass string
 	if password != confirmPass {
 		return domain.User{}, errors.New("password and confirm password are not same")
 	}
-	user, err := s.userRepository.Register(email, password)
+	hashPassword, err := GenerateHashPassword(password)
+	if err != nil {
+		return domain.User{}, err
+	}
+	user, err := s.userRepository.Register(email, hashPassword)
 	if err != nil {
 		return domain.User{}, err
 	}

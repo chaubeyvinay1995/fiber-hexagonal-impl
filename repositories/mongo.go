@@ -47,7 +47,7 @@ func NewUserRepository(conn string) *UserRepository {
 
 func (r *UserRepository) Login(email string, password string) (domain.User, error) {
 	var user domain.User
-	filter := bson.D{{"email", email}, {"password", password}}
+	filter := bson.D{{"email", email}}
 	err := r.collection.FindOne(context.TODO(), filter).Decode(&user)
 	if err != nil {
 		return domain.User{}, err
